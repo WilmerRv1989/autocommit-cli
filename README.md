@@ -4,37 +4,114 @@
 
 ## 📖 Introducción
 
-**AutoCommit CLI** es una herramienta de línea de comandos diseñada para automatizar el flujo de trabajo repetitivo de Git (`add` + `commit` + `push`) en entornos Windows.
+**AutoCommit CLI** es una herramienta de línea de comandos **avanzada** diseñada para automatizar el flujo de trabajo repetitivo de Git (`add` + `commit` + `push`) en entornos Windows, **ahora con características de seguridad empresariales**.
 
 Nació de la necesidad real de optimizar el tiempo y reducir la carga cognitiva de escribir múltiples comandos o pelear con interfaces visuales (GUIs) que no siempre son amigables con los lectores de pantalla (NVDA, JAWS).
 
+### 🆕 **Características Nuevas (v2.0 - Diciembre 2025)**
+- ✨ **Sistema de logging automático** - Bitácora completa de todas las operaciones
+- 🛡️ **Scanner de seguridad integrado** - Detecta archivos sensibles antes de subirlos
+- 🔒 **Doble confirmación** - Protección contra subida accidental de credenciales
+- 📊 **Trazabilidad completa** - Logs detallados para debugging y auditoría
+
 ### ¿Qué hace por ti?
 
-* **Detecta el contexto:** Sabe si estás dentro de un repositorio o si debe ofrecerte una lista de tus proyectos.
-* **Previene desastres:** Verifica si hay conflictos remotos (`git pull`) antes de dejarte subir nada.
-* **Gestión Inteligente:** Se integra perfectamente con configuraciones multi-cuenta (Personal vs. Trabajo/Universidad) usando SSH.
-* **Cero Fricción:** Un solo comando para gobernarlos a todos.
+* **🔍 Detecta el contexto:** Sabe si estás dentro de un repositorio o si debe ofrecerte una lista de tus proyectos.
+* **🛡️ Previene desastres:** Verifica si hay conflictos remotos (`git pull`) antes de dejarte subir nada.
+* **🔒 Protege tus secretos:** Escanea automáticamente archivos sensibles (.env, .key, passwords) y te alerta antes de subirlos.
+* **📋 Registra todo:** Mantiene una bitácora automática de todas las operaciones en `~/.autocommit.log`.
+* **🔑 Gestión Inteligente:** Se integra perfectamente con configuraciones multi-cuenta (Personal vs. Trabajo/Universidad) usando SSH.
+* **⚡ Cero Fricción:** Un solo comando para gobernarlos a todos, ahora más seguro que nunca.
 
 ## 🛠️ Requisitos Previos
 
-* **Python 3.x** instalado.
-* **Git** instalado y accesible desde la consola (`git --version`).
-* **Sistema Operativo:** Windows 10/11.
+> **Para Novatos:** Si no tienes experiencia instalando software, sigue cada paso cuidadosamente. ¡No te preocupes, es más fácil de lo que parece!
+
+### ✅ **Verificar si ya tienes todo instalado**
+Antes de instalar nada, abre **PowerShell** o **Símbolo del sistema** (presiona `Windows + R`, escribe `cmd` y presiona Enter) y verifica:
+
+```powershell
+# Verificar Python (debe mostrar algo como "Python 3.11.x")
+python --version
+
+# Verificar Git (debe mostrar algo como "git version 2.x.x")
+git --version
+```
+
+### 📋 **Lista de Requisitos**
+* **🐍 Python 3.7 o superior** - El "cerebro" que ejecuta nuestro script
+* **📂 Git 2.0 o superior** - Para manejar los repositorios
+* **💻 Windows 10/11** - Sistema operativo compatible
+* **🌐 Conexión a Internet** - Para sincronizar con GitHub/GitLab
+
+### 🔧 **Si necesitas instalar algo:**
+
+**Para Python:**
+1. Ve a [python.org/downloads](https://python.org/downloads)
+2. Descarga la versión más reciente
+3. **¡IMPORTANTE!** Durante la instalación, marca la casilla **"Add Python to PATH"**
+
+**Para Git:**
+1. Ve a [git-scm.com/download](https://git-scm.com/download)
+2. Descarga e instala con las opciones por defecto
 
 ## 📥 Instalación (Paso a Paso)
 
-### 1. Preparar la Herramienta
-Clona este repositorio o descarga los archivos en una carpeta segura, por ejemplo: `C:\Scripts` o `C:\Herramientas`.
+> **💡 Tip para Novatos:** La instalación toma aproximadamente 5-10 minutos. Lee cada paso completamente antes de ejecutarlo.
 
-### 2. Configurar el "Comando Mágico" (PATH)
+### 1. 📁 Preparar la Herramienta
+
+**Opción A: Descarga Directa (Más Fácil)**
+1. Haz clic en el botón verde **"Code"** arriba de esta página
+2. Selecciona **"Download ZIP"**
+3. Extrae el archivo en una carpeta fácil de recordar como:
+   - `C:\Herramientas\autocommit-cli`
+   - `C:\Scripts\autocommit-cli`
+
+**Opción B: Usando Git (Recomendado si ya usas Git)**
+```powershell
+# Abre PowerShell y ejecuta:
+git clone https://github.com/WilmerRv1989/autocommit-cli.git
+cd autocommit-cli
+```
+
+### 2. ⚙️ Configurar el "Comando Mágico" (PATH)
+
+> **¿Qué es PATH?** Es como una "libreta de direcciones" que le dice a Windows dónde encontrar programas cuando escribes su nombre en cualquier terminal.
 Para ejecutar `autocommit` desde cualquier lugar sin escribir la ruta completa, debes agregarlo a las Variables de Entorno.
 
-1.  Presiona la tecla **Windows**, escribe "Variables de entorno" y entra en **"Editar las variables de entorno del sistema"**.
-2.  Clic en el botón **Variables de entorno**.
-3.  En la sección de arriba (**Variables de usuario**), busca la fila `Path` y selecciónala.
-4.  Selecciona el botón **Editar**.
-5.  Selecciona  **Nuevo** y pega la ruta de la carpeta `src` de este proyecto (Ejemplo: `C:\Scripts\autocommit-cli\src`).
-6.  Acepta todas las ventanas.
+**📝 Pasos Detallados:**
+
+1. **Abrir Variables de Entorno:**
+   - Presiona la tecla **Windows**
+   - Escribe `"Variables de entorno"` (sin las comillas)
+   - Haz clic en **"Editar las variables de entorno del sistema"**
+   - Si Windows te pide permisos de administrador, acepta
+
+2. **Navegar a la configuración:**
+   - En la ventana que se abre, haz clic en **"Variables de entorno"** (botón inferior)
+
+3. **Editar PATH:**
+   - En la sección **superior** (Variables de usuario), busca la fila que dice `Path`
+   - Selecciónala haciendo clic sobre ella (se pondrá azul)
+   - Haz clic en **"Editar..."**
+
+4. **Agregar la ruta:**
+   - Haz clic en **"Nuevo"**
+   - Pega la ruta **completa** a la carpeta `src` de este proyecto
+   - **Ejemplo:** `C:\Herramientas\autocommit-cli\src`
+   - **⚠️ Importante:** Debe apuntar a la carpeta `src`, no a la raíz del proyecto
+
+5. **Guardar cambios:**
+   - Haz clic en **"Aceptar"** en todas las ventanas abiertas
+   - **Cierra y vuelve a abrir** cualquier terminal que tengas abierta
+
+**🧪 Verificar la instalación:**
+```powershell
+# Abre una nueva terminal y escribe:
+autocommit
+# Si ves el menú del programa, ¡está funcionando! 🎉
+```
 
 ### 3. Configurar tu Carpeta de Proyectos (Opcional)
 El script es inteligente y buscará tus proyectos en las carpetas más comunes (`C:\Users\TuUsuario\repos` o `source\repos`).
@@ -108,29 +185,166 @@ git remote set-url origin git@github-trabajo:TuUsuario/TuRepositorio.git
 
 ## 🚀 Uso
 
-Simplemente abre tu terminal (CMD, PowerShell, Terminal de VS Code) y escribe:
+> **Para Novatos:** El comando `autocommit` es inteligente y se adapta a donde te encuentres. ¡No te preocupes por memorizar opciones complicadas!
 
+### 🎯 **Uso Básico**
+
+1. **Abre tu terminal favorita:**
+   - **PowerShell** (recomendado): `Windows + X` → "Windows PowerShell"
+   - **Símbolo del sistema**: `Windows + R` → escribe `cmd`
+   - **Terminal en VS Code**: `Ctrl + ñ` (si usas VS Code)
+
+2. **Ejecuta el comando:**
 ```bash
 autocommit
 ```
 
-* **Si estás dentro de un proyecto:** Iniciará el proceso de sincronización, te pedirá mensaje y subirá los cambios.
-* **Si estás fuera:** Te mostrará una lista numerada de tus repositorios para que elijas cuál actualizar.
+### 🤖 **Comportamiento Inteligente**
+
+**📍 Si estás DENTRO de un proyecto Git:**
+```
+✅ Repositorio detectado: mi-proyecto
+🌿 Rama: main
+🔄 [1/4] Verificando nube...
+🛡️ [2/4] Escaneando archivos sensibles...
+📄 [3/4] Cambios detectados:
+M  archivo1.txt
+A  archivo2.py
+¿Subir cambios? (S/n):
+```
+
+**📂 Si estás FUERA de un proyecto:**
+```
+📂 Carpeta raíz detectada: C:\Users\TuUsuario\repos
+🔍 Selecciona un proyecto de tu lista:
+1. mi-web
+2. app-python
+3. proyecto-universidad
+👉 Ingresa el número del proyecto:
+```
+
+### 🛡️ **Características de Seguridad**
+
+**🚨 Detección de Archivos Sensibles:**
+Si el programa detecta archivos como `.env`, `.key`, `password.txt`, etc.:
+```
+🚨 ALERTA DE SEGURIDAD 🚨
+He detectado archivos que parecen contener CLAVES o SECRETOS:
+   - .env
+   - config/database.key
+
+¿Estás 100% SEGURO de que quieres subir esto a Internet?
+Escribe 'SI' (en mayúsculas) para confirmar, o Enter para cancelar:
+```
+
+**📋 Registro Automático:**
+Todas las operaciones se guardan automáticamente en: `C:\Users\TuUsuario\.autocommit.log`
+
+---
+
+## 🛡️ Sistema de Seguridad Integrado
+
+> **Nuevo en v2.0:** AutoCommit CLI ahora incluye un sistema de seguridad proactivo que te protege de errores costosos.
+
+### 🔍 **Scanner de Archivos Sensibles**
+
+El programa **automáticamente detecta** y te alerta sobre archivos que podrían contener información sensible:
+
+**🚨 Patrones Detectados:**
+- `.env` - Variables de entorno con secrets
+- `.key`, `.pem` - Llaves criptográficas
+- `config.js`, `settings.json` - Archivos de configuración
+- `password`, `secret`, `token` - Cualquier archivo con estas palabras
+- `id_rsa`, `credentials` - Archivos de autenticación
+
+### 📊 **Sistema de Logging**
+
+**📍 Ubicación del log:** `C:\Users\[TuUsuario]\.autocommit.log`
+
+**📋 Qué se registra:**
+```
+2025-12-02 14:30:15 - INFO - === Iniciando sesión de AutoCommit CLI ===
+2025-12-02 14:30:15 - INFO - Repositorio seleccionado: C:\repos\mi-proyecto
+2025-12-02 14:30:16 - WARNING - Intento de subir archivos sensibles: ['.env']
+2025-12-02 14:30:20 - INFO - Usuario autorizó manualmente subida de archivos sensibles
+2025-12-02 14:30:25 - INFO - Proceso completado con éxito
+```
+
+**🔍 Para revisar el log:**
+```powershell
+# Ver las últimas 20 líneas
+Get-Content ~\.autocommit.log -Tail 20
+
+# Buscar errores específicos
+Select-String "ERROR" ~\.autocommit.log
+```
 
 ---
 
 ## 🔧 Solución de Problemas Comunes
 
-### Error: "gpg failed to sign the data"
-Si Git se queja de firmas GPG y no tienes las llaves configuradas, desactívalo globalmente:
+### 🚫 Error: "gpg failed to sign the data"
+**Síntoma:** Aparece este mensaje al intentar hacer commit
+**Causa:** Git está configurado para firmar commits con GPG pero no tienes las llaves configuradas
+**Solución:**
 ```bash
+# Desactivar firma GPG globalmente
 git config --global commit.gpgsign false
 ```
 
-### Error: "Host desconocido" al usar SSH
-Asegúrate de que tu archivo `config` en la carpeta `.ssh` no tenga la extensión `.txt`. Debe llamarse estrictamente `config`. Puedes verificarlo en la consola con:
+### 🔌 Error: "Host desconocido" al usar SSH
+**Síntoma:** Error de conexión al intentar push/pull
+**Causa:** Archivo de configuración SSH mal nombrado o corrupto
+**Solución:**
 ```powershell
-dir %USERPROFILE%\.ssh
+# Verificar archivos SSH
+dir $env:USERPROFILE\.ssh
+
+# El archivo debe llamarse exactamente 'config' (sin extensión)
+# NO 'config.txt' o 'config.cfg'
+```
+
+### 📂 Error: "No se encontró carpeta de proyectos"
+**Síntoma:** El programa no encuentra tus repositorios automáticamente
+**Causa:** Tus proyectos están en una ubicación no estándar
+**Solución:**
+```powershell
+# Opción 1: Crear carpeta estándar
+mkdir $env:USERPROFILE\repos
+# Luego mueve tus proyectos ahí
+
+# Opción 2: Configurar ubicación personalizada
+# Ve a Variables de Entorno y crea:
+# Nombre: GIT_PROJECTS_ROOT
+# Valor: C:\tu\carpeta\de\proyectos
+```
+
+### 🔄 Error: "autocommit no se reconoce como comando"
+**Síntoma:** Windows dice que no encuentra el comando
+**Causa:** PATH no configurado correctamente o terminal no reiniciada
+**Solución:**
+1. **Verifica la instalación:**
+```powershell
+# Debe existir este archivo:
+Test-Path "C:\ruta\donde\instalaste\autocommit-cli\src\autocommit.bat"
+```
+2. **Reinicia TODAS las terminales** abiertas
+3. **Verifica PATH:**
+```powershell
+$env:PATH -split ';' | Select-String "autocommit"
+```
+
+### 🌐 Error de conexión a Internet
+**Síntoma:** Fallos en git pull/push
+**Causa:** Proxy corporativo, VPN, o firewall
+**Solución:**
+```bash
+# Si usas proxy corporativo:
+git config --global http.proxy http://proxy.empresa.com:8080
+git config --global https.proxy https://proxy.empresa.com:8080
+
+# Para verificar conectividad:
+ping github.com
 ```
 
 ## ⚠️ Casos Especiales y Errores Conocidos
@@ -165,7 +379,94 @@ El script está diseñado para detenerse ("fail-safe") si detecta algo inusual, 
 
 ---
 
-## 📄 Licencia
-Este proyecto está bajo la Licencia MIT - siéntete libre de usarlo, modificarlo y compartirlo.
+---
 
-Desarrollado con ❤️ y mucha cafeína por WilmerRv
+## 🆘 Soporte y Ayuda
+
+### 🐛 **Reportar Problemas**
+Si encuentras algún error o tienes sugerencias:
+1. Ve a la sección **[Issues](../../issues)** de este repositorio
+2. Haz clic en **"New Issue"**
+3. Describe tu problema con el máximo detalle posible
+4. Incluye el contenido de tu archivo de log: `~/.autocommit.log`
+
+### 💬 **Comunidad**
+- **Preguntas rápidas:** Usa las **[Discussions](../../discussions)**
+- **Características nuevas:** Abre un **Feature Request** en Issues
+- **Mejoras de código:** Los **Pull Requests** son bienvenidos
+
+### 📚 **Para Desarrolladores**
+Si quieres contribuir al código:
+```bash
+# 1. Fork el repositorio
+# 2. Clona tu fork
+git clone https://github.com/TU-USUARIO/autocommit-cli.git
+
+# 3. Crea una rama para tu feature
+git checkout -b mi-nueva-feature
+
+# 4. Haz tus cambios y pruébalos
+python src/autocommit.py
+
+# 5. Commit y push
+git commit -m "feat: descripción de tu mejora"
+git push origin mi-nueva-feature
+
+# 6. Abre un Pull Request
+```
+
+---
+
+## 🚀 Roadmap y Futuras Mejoras
+
+### ✅ **Completado (v2.0 - Diciembre 2025)**
+- Sistema de logging completo
+- Scanner de archivos sensibles
+- Protección contra subida accidental de credenciales
+- Mejora en manejo de errores
+
+### 🔄 **En Desarrollo (v2.1 - Próximamente)**
+- [ ] Soporte para Linux y macOS
+- [ ] Tests automatizados
+- [ ] Commits semánticos automáticos
+- [ ] Integración con GitHub CLI
+
+### 🎯 **Planificado (v3.0 - Futuro)**
+- [ ] Dashboard web para métricas
+- [ ] Integración con Slack/Teams
+- [ ] Sistema de plugins
+- [ ] Análisis de código con IA
+
+---
+
+## ❤️ Agradecimientos
+
+**AutoCommit CLI** ha crecido gracias a la comunidad. Agradecimientos especiales a:
+- La comunidad de **accesibilidad digital** por inspirar el enfoque inclusivo
+- Usuarios que reportaron bugs y sugirieron mejoras
+- Contribuidores que enviaron Pull Requests
+
+---
+
+## 📄 Licencia
+
+Este proyecto está bajo la **Licencia MIT** - siéntete libre de usarlo, modificarlo y compartirlo.
+
+**¿Qué significa esto?** Puedes:
+- ✅ Usar comercialmente
+- ✅ Modificar el código
+- ✅ Distribuir copias
+- ✅ Usar en proyectos privados
+- ❗ Debes incluir el aviso de copyright
+
+---
+
+<div align="center">
+
+**Desarrollado con ❤️ y mucha cafeína por [WilmerRv](https://github.com/WilmerRv1989)**
+
+*"La automatización inteligente libera tiempo para lo que realmente importa: crear cosas increíbles"*
+
+⭐ **Si te gusta el proyecto, dale una estrella** ⭐
+
+</div>

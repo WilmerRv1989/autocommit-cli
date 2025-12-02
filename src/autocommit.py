@@ -1,120 +1,152 @@
 import os
 import subprocess
 import sys
+import logging
+from datetime import datetime
 
-# --- CONFIGURACIÓN automatizada ---
+# --- CONFIGURACIÓN DE LOGS (Bitácora) ---
+# Guarda un historial en la carpeta de usuario (ej: C:\Users\Wilme\.autocommit.log)
+LOG_FILE = os.path.join(os.path.expanduser("~"), ".autocommit.log")
+
+logging.basicConfig(
+    filename=LOG_FILE,
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    encoding='utf-8'
+)
+
+# --- CONFIGURACIÓN INTELIGENTE DE RUTAS ---
 def get_projects_root():
-    """
-    Busca la carpeta de proyectos en ubicaciones comunes automáticamente.
-    Prioridad:
-    1. Variable de entorno 'GIT_PROJECTS_ROOT' (Configuración manual)
-    2. Carpeta 'repos' en el usuario actual (Ej: C:\Users\mi_usuario\repos)
-    3. Carpeta 'source\repos' (Estándar de Visual Studio)
-    4. Carpeta 'Projects' (Común en Mac/Linux)
-    """
-    # 1. Revisar variable de entorno
+    """Busca la carpeta de proyectos en ubicaciones comunes."""
     env_root = os.getenv("GIT_PROJECTS_ROOT")
-    if env_root and os.path.exists(env_root):
-        return env_root
+    if env_root and os.path.exists(env_root): return env_root
     
-    # 2. Revisar rutas comunes
     user_home = os.path.expanduser("~")
     possible_paths = [
-        os.path.join(user_home, "repos"),          # Tu configuración actual
-        os.path.join(user_home, "source", "repos"), # Visual Studio
-        os.path.join(user_home, "Projects"),        # Genérico
-        os.path.join(user_home, "Desarrollo")       # Genérico ES
+        os.path.join(user_home, "repos"),
+        os.path.join(user_home, "source", "repos"),
+        os.path.join(user_home, "Projects")
     ]
-    
     for path in possible_paths:
-        if os.path.exists(path):
-            return path
-            
+        if os.path.exists(path): return path
     return None
 
-# Detectamos la raíz al iniciar
 ROOT_PROJECTS_DIR = get_projects_root()
 
+# --- LISTA NEGRA DE SEGURIDAD ---
+# Archivos que nunca deberían subirse sin doble confirmación
+SENSITIVE_PATTERNS = [
+    ".env", "config.js", "secrets", "credentials", 
+    ".pem", ".key", "id_rsa", "password", "token"
+]
+
+def log_and_print(msg, level="info"):
+    """Imprime en pantalla y guarda en el log al mismo tiempo."""
+    if level == "info":
+        print(msg)
+        logging.info(msg)
+    elif level == "error":
+        print(f"❌ {msg}")
+        logging.error(msg)
+    elif level == "warning":
+        print(f"⚠️ {msg}")
+        logging.warning(msg)
+
 def run_command(command, cwd=None, exit_on_error=True):
-    """
-    Ejecuta comandos de sistema de forma segura y maneja errores.
-    Retorna la salida limpia del comando.
-    """
+    """Ejecuta comandos de sistema de forma segura."""
     try:
-        # Ejecuta el comando capturando stdout y stderr
+        logging.debug(f"Ejecutando: {command} en {cwd}")
         result = subprocess.run(
-            command, 
-            cwd=cwd, 
-            shell=True, 
-            check=True, 
-            stdout=subprocess.PIPE, 
-            stderr=subprocess.PIPE,
-            text=True
+            command, cwd=cwd, shell=True, check=True, 
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
         )
         return result.stdout.strip()
     except subprocess.CalledProcessError as e:
+        err_msg = e.stderr.strip()
+        logging.error(f"Fallo en comando '{command}': {err_msg}")
+        
         if exit_on_error:
-            print(f"\n❌ ERROR CRÍTICO AL EJECUTAR: {command}")
-            print(f"   Detalle técnico: {e.stderr.strip()}")
+            print(f"\n❌ ERROR CRÍTICO: {command}")
+            print(f"   Detalle: {err_msg}")
             
-            # Ayuda contextual para errores comunes
-            err_msg = e.stderr.lower()
-            if "conflict" in err_msg or "rejected" in err_msg:
-                print("\n⚠️  DIAGNÓSTICO: Tienes conflictos con la versión en línea.")
-                print("   ACCIÓN: Ejecuta 'git pull' manualmente y resuelve los conflictos en el código.")
-            elif "permission denied" in err_msg or "publickey" in err_msg:
-                print("\n⚠️  DIAGNÓSTICO: Problema de permisos SSH.")
-                print("   ACCIÓN: Verifica tus llaves SSH y el archivo 'config'.")
+            if "conflict" in err_msg.lower():
+                log_and_print("Diagnóstico: Conflictos de fusión detectados.", "warning")
+            elif "permission denied" in err_msg.lower():
+                log_and_print("Diagnóstico: Error de permisos SSH.", "warning")
             
             sys.exit(1)
         return None
 
+def check_security(repo_path):
+    """
+    Escanea los archivos modificados en busca de nombres peligrosos.
+    Retorna True si es seguro proceder, False si el usuario cancela.
+    """
+    status_output = run_command("git status --porcelain", cwd=repo_path, exit_on_error=False)
+    if not status_output: return True
+
+    suspicious_files = []
+    for line in status_output.splitlines():
+        # Formato porcelain: "M  archivo.txt" o "?? archivo.txt"
+        filename = line[3:].strip()
+        for pattern in SENSITIVE_PATTERNS:
+            if pattern in filename.lower():
+                suspicious_files.append(filename)
+                break
+    
+    if suspicious_files:
+        print("\n🚨 ALERTA DE SEGURIDAD 🚨")
+        print("He detectado archivos que parecen contener CLAVES o SECRETOS:")
+        for f in suspicious_files:
+            print(f"   - {f}")
+        
+        logging.warning(f"Intento de subir archivos sensibles: {suspicious_files}")
+        print("\n¿Estás 100% SEGURO de que quieres subir esto a Internet?")
+        confirm = input("Escribe 'SI' (en mayúsculas) para confirmar, o Enter para cancelar: ")
+        
+        if confirm != "SI":
+            log_and_print("Operación cancelada por protocolo de seguridad.", "warning")
+            return False
+            
+        logging.info("Usuario autorizó manualmente subida de archivos sensibles.")
+    
+    return True
+
+# ... (Funciones de soporte is_git_repo, get_current_branch, select_project se mantienen igual) ...
 def is_git_repo(path):
-    """Verifica si la carpeta contiene un subdirectorio .git"""
     return os.path.isdir(os.path.join(path, ".git"))
 
 def get_current_branch(repo_path):
-    """Obtiene el nombre de la rama actual (main, master, develop, etc.)"""
     return run_command("git branch --show-current", cwd=repo_path)
 
 def select_project():
-    """
-    Muestra un menú interactivo si el script se ejecuta fuera de un repositorio.
-    """
     if not ROOT_PROJECTS_DIR:
-        print(f"\n⚠️  ATENCIÓN: No se encontró ninguna carpeta de proyectos común.")
-        print("   Buscamos en 'repos', 'source/repos' y 'Projects' dentro de tu usuario.")
-        print("\n   SOLUCIÓN RÁPIDA: Crea una carpeta llamada 'repos' en tu usuario")
-        print("   O configura la variable de entorno 'GIT_PROJECTS_ROOT'.")
+        log_and_print("No se encontró carpeta de proyectos raíz.", "error")
         return None
 
-    # Escanea la carpeta raíz buscando repositorios git
     repos = [d for d in os.listdir(ROOT_PROJECTS_DIR) 
              if os.path.isdir(os.path.join(ROOT_PROJECTS_DIR, d)) and is_git_repo(os.path.join(ROOT_PROJECTS_DIR, d))]
     
     if not repos:
-        print(f"No se encontraron repositorios git en {ROOT_PROJECTS_DIR}")
+        print("No hay repositorios disponibles.")
         return None
 
-    print(f"\n📂 Carpeta raíz detectada: {ROOT_PROJECTS_DIR}")
-    print("🔍 Selecciona un proyecto de tu lista:")
+    print(f"\n📂 Raíz: {ROOT_PROJECTS_DIR}")
     for i, repo in enumerate(repos):
         print(f"{i + 1}. {repo}")
     
     try:
-        selection = input("\n👉 Ingresa el número del proyecto: ")
-        if not selection.isdigit(): return None
-        choice = int(selection) - 1
-        if 0 <= choice < len(repos):
-            return os.path.join(ROOT_PROJECTS_DIR, repos[choice])
+        selection = input("\n👉 Número: ")
+        if selection.isdigit() and 0 <= int(selection)-1 < len(repos):
+            return os.path.join(ROOT_PROJECTS_DIR, repos[int(selection)-1])
     except ValueError:
         pass
     return None
 
 def main():
+    logging.info("=== Iniciando sesión de AutoCommit CLI ===")
     current_dir = os.getcwd()
     
-    # --- FASE 1: IDENTIFICACIÓN ---
     if is_git_repo(current_dir):
         target_repo = current_dir
         print(f"✅ Repositorio detectado: {os.path.basename(current_dir)}")
@@ -122,57 +154,49 @@ def main():
         target_repo = select_project()
 
     if not target_repo:
-        print("❌ Operación cancelada o ruta inválida.")
         sys.exit(1)
 
-    print(f"\n🚀 Iniciando AutoFlow en: {target_repo}")
+    logging.info(f"Repositorio seleccionado: {target_repo}")
     branch = get_current_branch(target_repo)
-    print(f"🌿 Rama activa: {branch}")
-    
-    # --- FASE 2: SINCRONIZACIÓN PREVIA (Seguridad) ---
-    print("\n🔄 [1/4] Verificando cambios remotos (git pull)...")
-    # exit_on_error=False permite manejar el error nosotros mismos
-    pull_result = run_command(f"git pull origin {branch}", cwd=target_repo, exit_on_error=False)
-    
-    if pull_result is None:
-        print("\n🛑 ALTO: La actualización falló.")
-        print("   Es probable que existan conflictos de fusión (merge conflicts).")
-        print("   El script se detendrá para proteger tus archivos locales.")
-        sys.exit(1)
-    else:
-        print("   ✅ Sincronización exitosa.")
+    print(f"🌿 Rama: {branch}")
 
-    # --- FASE 3: VERIFICACIÓN DE ESTADO ---
+    # 1. ACTUALIZACIÓN (Pull)
+    print("\n🔄 [1/4] Verificando nube...")
+    if run_command(f"git pull origin {branch}", cwd=target_repo, exit_on_error=False) is None:
+        log_and_print("Fallo en actualización (Pull). Revisa conflictos.", "error")
+        sys.exit(1)
+
+    # 2. SEGURIDAD (Scanner)
+    if not check_security(target_repo):
+        sys.exit(1)
+
+    # 3. ESTADO
     status = run_command("git status --porcelain", cwd=target_repo)
     if not status:
-        print("\n✨ [2/4] El repositorio está limpio. No hay cambios para subir.")
+        print("\n✨ [2/4] Todo limpio.")
+        logging.info("Repositorio limpio, finalizando.")
         sys.exit(0)
 
-    print("\n📄 [2/4] Archivos modificados pendientes:")
-    print("--------------------------------")
+    print("\n📄 [2/4] Cambios detectados:")
     print(status)
-    print("--------------------------------")
     
-    confirm = input("¿Deseas subir estos cambios ahora? (S/n): ").lower()
-    if confirm == 'n':
-        print("Operación cancelada por el usuario.")
+    if input("¿Subir cambios? (S/n): ").lower() == 'n':
+        logging.info("Cancelado por usuario.")
         sys.exit(0)
 
-    # --- FASE 4: EMPAQUETADO Y SUBIDA ---
-    print("\n📦 [3/4] Agregando archivos al área de preparación (staging)...")
+    # 4. SUBIDA
+    print("\n📦 [3/4] Empaquetando...")
     run_command("git add .", cwd=target_repo)
     
-    msg = input("✍️  Mensaje para el commit (Enter para default): ")
-    if not msg.strip(): 
-        msg = "Actualización automática via AutoFlow CLI"
+    msg = input("✍️  Mensaje (Enter para default): ")
+    if not msg.strip(): msg = "Update via AutoCommit CLI"
     
-    # Intentamos hacer commit. Manejamos error si no hay nada que commitear (raro pero posible)
     run_command(f'git commit -m "{msg}"', cwd=target_repo)
     
-    print(f"\n🚀 [4/4] Subiendo cambios a GitHub ({branch})...")
+    print(f"\n🚀 [4/4] Subiendo a {branch}...")
     run_command(f"git push origin {branch}", cwd=target_repo)
     
-    print("\n✅ ¡ÉXITO! Tu repositorio está actualizado.")
+    log_and_print("Proceso completado con éxito.")
 
 if __name__ == "__main__":
     main()
