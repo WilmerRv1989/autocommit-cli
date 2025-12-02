@@ -1,0 +1,19 @@
+pycache/
+*.pyc
+*.pyo
+*.pyd
+
+Windows artifacts
+
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+Editor settings
+
+.vscode/
+
+Mac artifacts
+
+.DS_Store
