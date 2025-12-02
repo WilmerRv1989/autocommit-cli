@@ -133,6 +133,36 @@ Asegúrate de que tu archivo `config` en la carpeta `.ssh` no tenga la extensió
 dir %USERPROFILE%\.ssh
 ```
 
+## ⚠️ Casos Especiales y Errores Conocidos
+
+El script está diseñado para detenerse ("fail-safe") si detecta algo inusual, protegiendo tu código de ser sobrescrito. Aquí te explicamos cómo solucionar los bloqueos más comunes:
+
+### 1. El Error del "Repositorio Vacío"
+**Síntoma:** Creas un repo nuevo en GitHub, corres el script y te dice: *ALERT: No se pudo actualizar el repositorio local*.
+**Causa:** El script intenta bajar cambios (`git pull`), pero como el repositorio en la nube está vacío (0 commits), no encuentra nada y se detiene por seguridad.
+**Solución:** Solo la primera vez, sube los archivos manualmente para crear la rama principal:
+`git push -u origin main`
+
+### 2. Error "Unrelated Histories"
+**Síntoma:** Error fatal: *refusing to merge unrelated histories*.
+**Causa:** Creaste un repo en GitHub con un `README` inicial y tienes otro repo en tu PC con archivos distintos. Git no sabe cómo mezclarlos porque no comparten un pasado común.
+**Solución:** Fuerza la unión de ambas historias una sola vez:
+`git pull origin main --allow-unrelated-histories`
+
+### 3. Conflictos de Edición (Merge Conflict)
+**Síntoma:** El script se detiene y avisa de un *CONFLICT*.
+**Causa:** Tú y otra persona modificaron la misma línea del mismo archivo. Git no sabe cuál conservar.
+**Solución:**
+1. Abre los archivos en conflicto.
+2. Decide qué código se queda y borra las marcas de Git (`<<<<<<<`, `=======`, `>>>>>>>`).
+3. Guarda y haz el commit manual: `git commit -m "Conflicto resuelto"`.
+
+### 4. Error de Rama "Master vs Main"
+**Síntoma:** Error *src refspec main does not match any*.
+**Causa:** Git antiguo suele llamar a la rama `master`, pero GitHub moderno usa `main`.
+**Solución:** Renombra tu rama local para modernizarla:
+`git branch -M main`
+
 ---
 
 ## 📄 Licencia
