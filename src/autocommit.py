@@ -5,7 +5,7 @@ import logging
 from datetime import datetime
 
 # --- CONFIGURACIÓN DE LOGS (Bitácora) ---
-# Guarda un historial en la carpeta de usuario (ej: C:\Users\Wilme\.autocommit.log)
+# Guarda un historial en la carpeta de usuario (ej: C:\Users\mi_usuario\.autocommit.log)
 LOG_FILE = os.path.join(os.path.expanduser("~"), ".autocommit.log")
 
 logging.basicConfig(

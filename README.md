@@ -4,24 +4,18 @@
 
 ## 📖 Introducción
 
-**AutoCommit CLI** es una herramienta de línea de comandos **avanzada** diseñada para automatizar el flujo de trabajo repetitivo de Git (`add` + `commit` + `push`) en entornos Windows, **ahora con características de seguridad empresariales**.
+**AutoCommit CLI** es una herramienta de línea de comandos **avanzada** diseñada para automatizar el flujo de trabajo repetitivo de Git (`add` + `commit` + `push`) en entornos Windows, incluye características de seguridad .
 
 Nació de la necesidad real de optimizar el tiempo y reducir la carga cognitiva de escribir múltiples comandos o pelear con interfaces visuales (GUIs) que no siempre son amigables con los lectores de pantalla (NVDA, JAWS).
-
-### 🆕 **Características Nuevas (v2.0 - Diciembre 2025)**
-- ✨ **Sistema de logging automático** - Bitácora completa de todas las operaciones
-- 🛡️ **Scanner de seguridad integrado** - Detecta archivos sensibles antes de subirlos
-- 🔒 **Doble confirmación** - Protección contra subida accidental de credenciales
-- 📊 **Trazabilidad completa** - Logs detallados para debugging y auditoría
 
 ### ¿Qué hace por ti?
 
 * **🔍 Detecta el contexto:** Sabe si estás dentro de un repositorio o si debe ofrecerte una lista de tus proyectos.
 * **🛡️ Previene desastres:** Verifica si hay conflictos remotos (`git pull`) antes de dejarte subir nada.
-* **🔒 Protege tus secretos:** Escanea automáticamente archivos sensibles (.env, .key, passwords) y te alerta antes de subirlos.
+* **🔒 Protege tus secretos:** Escanea automáticamente archivos sensibles (.env, .key, passwords) y te alerta antes de subirlos en aquellos casos que no tengas un git ignore configurado.
 * **📋 Registra todo:** Mantiene una bitácora automática de todas las operaciones en `~/.autocommit.log`.
 * **🔑 Gestión Inteligente:** Se integra perfectamente con configuraciones multi-cuenta (Personal vs. Trabajo/Universidad) usando SSH.
-* **⚡ Cero Fricción:** Un solo comando para gobernarlos a todos, ahora más seguro que nunca.
+* **⚡ Cero Fricción:** Un solo comando para gobernarlos a todos.
 
 ## 🛠️ Requisitos Previos
 
@@ -57,7 +51,7 @@ git --version
 
 ## 📥 Instalación (Paso a Paso)
 
-> **💡 Tip para Novatos:** La instalación toma aproximadamente 5-10 minutos. Lee cada paso completamente antes de ejecutarlo.
+> **💡 Tip para principiantes:** La instalación toma aproximadamente 5-10 minutos. Lee cada paso completamente antes de ejecutarlo.
 
 ### 1. 📁 Preparar la Herramienta
 
@@ -67,13 +61,6 @@ git --version
 3. Extrae el archivo en una carpeta fácil de recordar como:
    - `C:\Herramientas\autocommit-cli`
    - `C:\Scripts\autocommit-cli`
-
-**Opción B: Usando Git (Recomendado si ya usas Git)**
-```powershell
-# Abre PowerShell y ejecuta:
-git clone https://github.com/WilmerRv1989/autocommit-cli.git
-cd autocommit-cli
-```
 
 ### 2. ⚙️ Configurar el "Comando Mágico" (PATH)
 
@@ -85,7 +72,7 @@ Para ejecutar `autocommit` desde cualquier lugar sin escribir la ruta completa, 
 1. **Abrir Variables de Entorno:**
    - Presiona la tecla **Windows**
    - Escribe `"Variables de entorno"` (sin las comillas)
-   - Haz clic en **"Editar las variables de entorno del sistema"**
+   - selecciona en **"Editar las variables de entorno del sistema"**
    - Si Windows te pide permisos de administrador, acepta
 
 2. **Navegar a la configuración:**
@@ -93,24 +80,24 @@ Para ejecutar `autocommit` desde cualquier lugar sin escribir la ruta completa, 
 
 3. **Editar PATH:**
    - En la sección **superior** (Variables de usuario), busca la fila que dice `Path`
-   - Selecciónala haciendo clic sobre ella (se pondrá azul)
-   - Haz clic en **"Editar..."**
+   - Selecciónala haciendo clic o presionando barra espaciadora sobre ella 
+   - presiona tab y selecciona **"Editar..."**
 
 4. **Agregar la ruta:**
-   - Haz clic en **"Nuevo"**
+   - busca con tab de nuevo y selecciona **"Nuevo"**
    - Pega la ruta **completa** a la carpeta `src` de este proyecto
    - **Ejemplo:** `C:\Herramientas\autocommit-cli\src`
    - **⚠️ Importante:** Debe apuntar a la carpeta `src`, no a la raíz del proyecto
 
 5. **Guardar cambios:**
-   - Haz clic en **"Aceptar"** en todas las ventanas abiertas
+   - Busca con tab y selecciona en **"Aceptar"** en todas las ventanas abiertas
    - **Cierra y vuelve a abrir** cualquier terminal que tengas abierta
 
 **🧪 Verificar la instalación:**
 ```powershell
 # Abre una nueva terminal y escribe:
 autocommit
-# Si ves el menú del programa, ¡está funcionando! 🎉
+# Si escuchas el menú del programa, ¡está funcionando! 🎉
 ```
 
 ### 3. Configurar tu Carpeta de Proyectos (Opcional)
@@ -118,11 +105,11 @@ El script es inteligente y buscará tus proyectos en las carpetas más comunes (
 Si guardas tus proyectos en una ubicación personalizada, puedes configurar una Variable de Entorno:
 
 1.  Vuelve a **Variables de entorno** > **Variables de usuario**.
-2.  Clic en **Nueva...**.
+2.  Busca **Nueva...**.
 3.  **Nombre:** `GIT_PROJECTS_ROOT`
 4.  **Valor:** La ruta de tu carpeta de proyectos.
 
-## 🔐 Configuración Avanzada: Multi-Cuenta con SSH
+## 🔐 Configuración Avanzada: Multi-Cuenta con SSH si aún no lo tienes configurado
 *(El secreto para gestionar cuentas Personales y de Trabajo/Universidad sin conflictos)*
 
 Si usas múltiples cuentas de GitHub, la clave es usar SSH y un archivo config.
@@ -185,7 +172,7 @@ git remote set-url origin git@github-trabajo:TuUsuario/TuRepositorio.git
 
 ## 🚀 Uso
 
-> **Para Novatos:** El comando `autocommit` es inteligente y se adapta a donde te encuentres. ¡No te preocupes por memorizar opciones complicadas!
+> El comando `autocommit` es inteligente y se adapta a donde te encuentres. ¡No te preocupes por memorizar opciones complicadas!
 
 ### 🎯 **Uso Básico**
 
@@ -241,34 +228,6 @@ Escribe 'SI' (en mayúsculas) para confirmar, o Enter para cancelar:
 Todas las operaciones se guardan automáticamente en: `C:\Users\TuUsuario\.autocommit.log`
 
 ---
-
-## 🛡️ Sistema de Seguridad Integrado
-
-> **Nuevo en v2.0:** AutoCommit CLI ahora incluye un sistema de seguridad proactivo que te protege de errores costosos.
-
-### 🔍 **Scanner de Archivos Sensibles**
-
-El programa **automáticamente detecta** y te alerta sobre archivos que podrían contener información sensible:
-
-**🚨 Patrones Detectados:**
-- `.env` - Variables de entorno con secrets
-- `.key`, `.pem` - Llaves criptográficas
-- `config.js`, `settings.json` - Archivos de configuración
-- `password`, `secret`, `token` - Cualquier archivo con estas palabras
-- `id_rsa`, `credentials` - Archivos de autenticación
-
-### 📊 **Sistema de Logging**
-
-**📍 Ubicación del log:** `C:\Users\[TuUsuario]\.autocommit.log`
-
-**📋 Qué se registra:**
-```
-2025-12-02 14:30:15 - INFO - === Iniciando sesión de AutoCommit CLI ===
-2025-12-02 14:30:15 - INFO - Repositorio seleccionado: C:\repos\mi-proyecto
-2025-12-02 14:30:16 - WARNING - Intento de subir archivos sensibles: ['.env']
-2025-12-02 14:30:20 - INFO - Usuario autorizó manualmente subida de archivos sensibles
-2025-12-02 14:30:25 - INFO - Proceso completado con éxito
-```
 
 **🔍 Para revisar el log:**
 ```powershell
@@ -388,63 +347,7 @@ Si encuentras algún error o tienes sugerencias:
 1. Ve a la sección **[Issues](../../issues)** de este repositorio
 2. Haz clic en **"New Issue"**
 3. Describe tu problema con el máximo detalle posible
-4. Incluye el contenido de tu archivo de log: `~/.autocommit.log`
-
-### 💬 **Comunidad**
-- **Preguntas rápidas:** Usa las **[Discussions](../../discussions)**
-- **Características nuevas:** Abre un **Feature Request** en Issues
 - **Mejoras de código:** Los **Pull Requests** son bienvenidos
-
-### 📚 **Para Desarrolladores**
-Si quieres contribuir al código:
-```bash
-# 1. Fork el repositorio
-# 2. Clona tu fork
-git clone https://github.com/TU-USUARIO/autocommit-cli.git
-
-# 3. Crea una rama para tu feature
-git checkout -b mi-nueva-feature
-
-# 4. Haz tus cambios y pruébalos
-python src/autocommit.py
-
-# 5. Commit y push
-git commit -m "feat: descripción de tu mejora"
-git push origin mi-nueva-feature
-
-# 6. Abre un Pull Request
-```
-
----
-
-## 🚀 Roadmap y Futuras Mejoras
-
-### ✅ **Completado (v2.0 - Diciembre 2025)**
-- Sistema de logging completo
-- Scanner de archivos sensibles
-- Protección contra subida accidental de credenciales
-- Mejora en manejo de errores
-
-### 🔄 **En Desarrollo (v2.1 - Próximamente)**
-- [ ] Soporte para Linux y macOS
-- [ ] Tests automatizados
-- [ ] Commits semánticos automáticos
-- [ ] Integración con GitHub CLI
-
-### 🎯 **Planificado (v3.0 - Futuro)**
-- [ ] Dashboard web para métricas
-- [ ] Integración con Slack/Teams
-- [ ] Sistema de plugins
-- [ ] Análisis de código con IA
-
----
-
-## ❤️ Agradecimientos
-
-**AutoCommit CLI** ha crecido gracias a la comunidad. Agradecimientos especiales a:
-- La comunidad de **accesibilidad digital** por inspirar el enfoque inclusivo
-- Usuarios que reportaron bugs y sugirieron mejoras
-- Contribuidores que enviaron Pull Requests
 
 ---
 
