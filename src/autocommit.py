@@ -9,7 +9,7 @@ from pathlib import Path
 
 # --- CONFIGURACIÓN DE LOGS SEGURA ---
 LOG_FILE = os.path.join(os.path.expanduser("~"), ".autocommit.log")
-MAX_LOG_SIZE = 10 * 1024 * 1024  # 10MB
+MAX_LOG_SIZE = 10 * 1024 * 1024  # 10MB máximo
 
 def setup_secure_logging():
     """Configura logging seguro con rotación automática."""
