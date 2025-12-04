@@ -1,0 +1,185 @@
+# GitHub Actions Workflow para Security & Quality Checks
+# AutoCommit CLI v2.1 Security Hardened
+
+name: Security & Quality Analysis
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  security-scan:
+    name: Security Analysis
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        
+    - name: Install Security Tools
+      run: |
+        pip install --upgrade pip
+        pip install bandit safety
+        
+    - name: Run Bandit Security Scan
+      run: |
+        bandit -r src/ -f json -o bandit-report.json || true
+        bandit -r src/ # Mostrar en consola
+        
+    - name: Check Dependencies for Vulnerabilities
+      run: |
+        # Crear requirements básico para safety
+        echo "# No external dependencies" > requirements.txt
+        safety check --json --output safety-report.json || true
+        safety check
+        
+    - name: Upload Security Reports
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: security-reports
+        path: |
+          bandit-report.json
+          safety-report.json
+
+  code-quality:
+    name: Code Quality Check
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout Code  
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        
+    - name: Install Quality Tools
+      run: |
+        pip install --upgrade pip
+        pip install black flake8 mypy
+        
+    - name: Check Code Formatting (Black)
+      run: |
+        black --check --diff src/
+        
+    - name: Lint Code (Flake8)
+      run: |
+        flake8 src/
+        
+    - name: Type Check (MyPy)
+      run: |
+        mypy src/ --ignore-missing-imports || true
+
+  test-security:
+    name: Security Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+      
+    - name: Set up Python  
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        
+    - name: Install Test Dependencies
+      run: |
+        pip install --upgrade pip
+        pip install pytest pytest-cov
+        
+    - name: Run Security Tests
+      run: |
+        pytest tests/test_security.py -v --tb=short
+        
+    - name: Run All Tests with Coverage
+      run: |
+        pytest tests/ --cov=src/ --cov-report=xml --cov-report=html
+        
+    - name: Upload Coverage Reports
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: coverage-reports
+        path: |
+          coverage.xml
+          htmlcov/
+
+  integration-test:
+    name: Integration Test (Windows)
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4  
+      with:
+        python-version: '3.11'
+        
+    - name: Test Basic Functionality
+      run: |
+        # Test que el script se importa sin errores
+        python -c "import sys; sys.path.insert(0, 'src'); import autocommit; print('✅ Import successful')"
+        
+    - name: Test Security Functions
+      run: |
+        python -c "
+        import sys
+        sys.path.insert(0, 'src')
+        from autocommit import validate_git_input, SecurityError
+        
+        # Test validación básica
+        try:
+            result = validate_git_input('mensaje seguro', 'message')
+            print('✅ Safe input validation works')
+        except Exception as e:
+            print(f'❌ Safe input failed: {e}')
+            exit(1)
+            
+        # Test rechazo de input peligroso  
+        try:
+            validate_git_input('mensaje; rm -rf /', 'message')
+            print('❌ Dangerous input was NOT rejected!')
+            exit(1)
+        except SecurityError:
+            print('✅ Dangerous input correctly rejected')
+        except Exception as e:
+            print(f'❌ Unexpected error: {e}')
+            exit(1)
+        "
+
+  release-check:
+    name: Release Readiness
+    runs-on: ubuntu-latest
+    needs: [security-scan, code-quality, test-security, integration-test]
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+      
+    - name: Validate Release Criteria
+      run: |
+        echo "🔍 Checking release criteria..."
+        
+        # Verificar que existen los archivos críticos
+        test -f src/autocommit.py || (echo "❌ Main script missing" && exit 1)
+        test -f tests/test_security.py || (echo "❌ Security tests missing" && exit 1)
+        test -f README.md || (echo "❌ README missing" && exit 1)
+        
+        echo "✅ All critical files present"
+        echo "✅ Security checks passed"  
+        echo "✅ Quality checks passed"
+        echo "✅ Tests passed"
+        echo "🚀 Ready for v2.1 Security Hardened release!"

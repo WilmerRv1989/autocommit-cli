@@ -1,0 +1,21 @@
+# Dependencias para AutoCommit CLI v2.1 Security Hardened
+
+# Testing framework
+pytest>=7.0.0
+pytest-cov>=4.0.0
+
+# Security analysis
+bandit>=1.7.0
+safety>=2.0.0
+
+# Code quality
+black>=23.0.0
+flake8>=6.0.0
+mypy>=1.0.0
+
+# Development utilities
+pre-commit>=3.0.0
+
+# Documentation (optional)
+mkdocs>=1.4.0
+mkdocs-material>=9.0.0

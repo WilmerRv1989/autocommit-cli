@@ -1,0 +1,35 @@
+# Configuración de Flake8 para AutoCommit CLI
+# Estándares de calidad de código
+
+[flake8]
+max-line-length = 88
+max-complexity = 10
+
+# Directorios a ignorar
+exclude = 
+    .git,
+    __pycache__,
+    .pytest_cache,
+    .venv,
+    venv,
+    build,
+    dist
+
+# Errores específicos a ignorar
+ignore = 
+    E203,  # Whitespace before ':'
+    W503,  # Line break before binary operator
+    E501   # Line too long (manejado por black)
+
+# Archivos por directorio
+per-file-ignores =
+    tests/*:F401,F811
+
+# Mostrar código fuente para cada error
+show-source = True
+
+# Mostrar estadísticas al final
+statistics = True
+
+# Contar errores
+count = True

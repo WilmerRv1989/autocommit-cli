@@ -1,0 +1,29 @@
+# Configuración de Bandit para análisis de seguridad
+# AutoCommit CLI v2.1 Security Hardened
+
+[bandit]
+# Directorio a escanear
+targets = src/
+
+# Nivel de confianza mínimo (HIGH, MEDIUM, LOW)
+confidence = MEDIUM
+
+# Severidad mínima a reportar (HIGH, MEDIUM, LOW)  
+severity = MEDIUM
+
+# Excluir tests de algunos checks específicos
+exclude_dirs = tests/
+
+# Formatos de salida
+format = json
+output_file = security-report.json
+
+# Tests a saltar (si fuera necesario)
+# skip = B101,B601
+
+# Tests específicos a ejecutar
+# tests = B201,B501
+
+# Configuración adicional
+recursive = true
+aggregate = file
