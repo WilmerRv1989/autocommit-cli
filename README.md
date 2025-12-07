@@ -1,24 +1,16 @@
 # 🚀 AutoCommit CLI
 
-> "La accesibilidad no es solo ajustar cosas, ¡es innovar para ser más eficientes!"
-
 ## 📖 Introducción
 
-**AutoCommit CLI v2.1 Security Hardened** es una herramienta de línea de comandos **avanzada y segura** diseñada para automatizar el flujo de trabajo repetitivo de Git (`add` + `commit` + `push`) en entornos Windows, **con seguridad de nivel empresarial**.
+**AutoCommit CLI** es una herramienta de línea de comandos **sencilla y segura** diseñada para automatizar el flujo de trabajo repetitivo de Git (`add` + `commit` + `push`) en entornos Windows, 
 
-Nació de la necesidad real de optimizar el tiempo y reducir la carga cognitiva de escribir múltiples comandos o pelear con interfaces visuales (GUIs) que no siempre son amigables con los lectores de pantalla (NVDA, JAWS).
-
-### ✨ **¡NUEVO! v2.1 Security Hardened (Diciembre 2025)**
-🛡️ **Vulnerabilidades críticas RESUELTAS**: Shell injection, input validation, y más  
-🧪 **Tests de seguridad**: Suite completa automatizada  
-🔒 **Validación robusta**: Entrada de usuario completamente sanitizada  
-📈 **CI/CD**: Análisis automático de seguridad y calidad
+Nació de la flojera de pelear con interfaces visuales (GUIs) que no siempre son amigables con los lectores de pantalla (NVDA, JAWS).
 
 ### ¿Qué hace por ti?
 
 * **🔍 Detecta el contexto:** Sabe si estás dentro de un repositorio o si debe ofrecerte una lista de tus proyectos.
 * **🛡️ Previene desastres:** Verifica si hay conflictos remotos (`git pull`) antes de dejarte subir nada.
-* **🔒 Protege tus secretos:** Scanner mejorado con regex y análisis de contenido para detectar archivos sensibles.
+* **🔒 Protege tus secretos:** Scanner con regex y análisis de contenido para detectar archivos sensibles.
 * **⚡ Previene ataques:** Validación completa contra shell injection y command substitution.
 * **📋 Registra todo:** Bitácora segura con rotación automática y sanitización de datos sensibles.
 * **⏱️ Timeouts de seguridad:** Protección contra comandos colgados o maliciosos.
@@ -28,7 +20,7 @@ Nació de la necesidad real de optimizar el tiempo y reducir la carga cognitiva 
 
 ## 🛠️ Requisitos Previos
 
-> **Para Novatos:** Si no tienes experiencia instalando software, sigue cada paso cuidadosamente. ¡No te preocupes, es más fácil de lo que parece!
+> **Para principiantes:** Si no tienes experiencia instalando software, sigue cada paso cuidadosamente. ¡No te preocupes, es más fácil de lo que parece!
 
 ### ✅ **Verificar si ya tienes todo instalado**
 Antes de instalar nada, abre **PowerShell** o **Símbolo del sistema** (presiona `Windows + R`, escribe `cmd` y presiona Enter) y verifica:
@@ -60,7 +52,7 @@ git --version
 
 ## 📥 Instalación (Paso a Paso)
 
-> **💡 Tip para principiantes:** La instalación toma aproximadamente 5-10 minutos. Lee cada paso completamente antes de ejecutarlo.
+> La instalación toma aproximadamente 5-10 minutos. Lee cada paso completamente antes de ejecutarlo.
 
 ### 1. 📁 Preparar la Herramienta
 
@@ -181,7 +173,7 @@ git remote set-url origin git@github-trabajo:TuUsuario/TuRepositorio.git
 
 ## 🚀 Uso
 
-> El comando `autocommit` es inteligente y se adapta a donde te encuentres. ¡No te preocupes por memorizar opciones complicadas!
+> El comando `autocommit` es inteligente y se adapta a donde te encuentres. Dale rienda suelta a la flojera.
 
 ### 🎯 **Uso Básico**
 
@@ -317,23 +309,6 @@ ping github.com
 
 ## 🚨 Aviso Importante de Seguridad
 
-> **⚠️ MIGRACIÓN NECESARIA:** Si usas una versión anterior a v2.1, **actualiza inmediatamente**. Las versiones previas contienen vulnerabilidades críticas de shell injection.
-
-**Cómo verificar tu versión:**
-```powershell
-# En el log deberías ver:
-# "AutoCommit CLI v2.1 Security Hardened"
-Get-Content ~/.autocommit.log -Tail 5
-```
-
-**Si no ves "v2.1 Security Hardened":**
-1. Respalda tus proyectos importantes
-2. Descarga la versión actual desde GitHub
-3. Reemplaza los archivos antiguos
-4. Ejecuta los tests: `pytest tests/test_security.py`
-
----
-
 ## ⚠️ Casos Especiales y Errores Conocidos
 
 El script está diseñado para detenerse ("fail-safe") si detecta algo inusual, protegiendo tu código de ser sobrescrito. Aquí te explicamos cómo solucionar los bloqueos más comunes:
@@ -394,7 +369,7 @@ Este proyecto está bajo la **Licencia MIT** - siéntete libre de usarlo, modifi
 
 <div align="center">
 
-**AutoCommit CLI v2.1 Security Hardened**  
+**AutoCommit CLI**  
 **Desarrollado con ❤️ y mucha cafeína por [WilmerRv](https://github.com/WilmerRv1989)**
 
 *"La automatización inteligente y SEGURA libera tiempo para lo que realmente importa: crear cosas increíbles"*

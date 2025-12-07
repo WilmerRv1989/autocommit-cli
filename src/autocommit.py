@@ -30,7 +30,7 @@ def setup_secure_logging():
     )
     
     # Log inicial de sesión con versión
-    logging.info("=== AutoCommit CLI v2.1 Security Hardened - Iniciando sesión ===")
+    logging.info("=== AutoCommit CLI - Iniciando sesión ===")
     logging.info(f"Python: {sys.version}, OS: {os.name}")
 
 # Inicializar logging seguro
@@ -209,7 +209,7 @@ def enhanced_security_scan(repo_path):
                 high_risk_files.append(f"{filename} (caracteres peligrosos)")
                 continue
             
-            # Verificar contra patrones regex mejorados
+            # Verificar contra patrones regex 
             for pattern in SENSITIVE_PATTERNS_REGEX:
                 if re.search(pattern, filename):
                     risk_level = "ALTO" if any(word in filename.lower() for word in ['key', 'password', 'secret']) else "MEDIO"
@@ -331,7 +331,7 @@ def select_project():
     for i, repo in enumerate(repos):
         print(f"{i + 1}. {repo}")
     
-    # Validación de entrada mejorada
+    # Validación de entrada 
     for attempt in range(3):
         try:
             selection = input(f"\n👉 Ingresa el número del proyecto (1-{len(repos)}, intento {attempt+1}/3): ").strip()
@@ -445,14 +445,14 @@ def main():
         try:
             msg = input("✍️  Mensaje para el commit (Enter para default): ").strip()
             if not msg:
-                msg = "Update via AutoCommit CLI v2.1 (Security Hardened)"
+                msg = "Update via AutoCommit CLI"
             
             # Validar mensaje de commit
             msg = validate_git_input(msg, 'message')
             
         except SecurityError as e:
             log_and_print(f"Mensaje de commit inseguro: {e}", "error")
-            msg = "Update via AutoCommit CLI v2.1 (Security Hardened)"  # Fallback seguro
+            msg = "Update via AutoCommit CLI"  # Fallback seguro
             print(f"   ⚠️  Usando mensaje seguro por defecto: {msg}")
         
         # Commit seguro
@@ -463,7 +463,7 @@ def main():
         run_command_secure(['git', 'push', 'origin', branch], cwd=target_repo)
         print(f"   ✅ Cambios subidos a {branch}")
         
-        log_and_print("✅ Proceso completado exitosamente con seguridad mejorada.")
+        log_and_print("✅ Proceso completado exitosamente.")
         
     except SecurityError as e:
         log_and_print(f"Error de seguridad: {e}", "error")
